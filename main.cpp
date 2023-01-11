@@ -1,11 +1,11 @@
 #include<SFML/Graphics.hpp>
 #include<iostream>
-#include"sorts.cpp"
-#include"button.cpp"
+#include"Selection.h"
 #include<random>
 #include<ctime>
 
 using namespace std;
+
 
 int main() {
 
@@ -14,6 +14,8 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(0, 0), "Graphical Sorting", sf::Style::Fullscreen);
     sf::Event event;
     sf::Color bgColor = sf::Color(8, 6, 12);
+
+    Selection sort(window, window.getSize().x, false);
 
     while (window.isOpen()) {
         while (window.pollEvent(event))
@@ -33,7 +35,7 @@ int main() {
 
         window.clear(bgColor);
 
-
+        sort.run(window, 100);
 
         window.display();
     }

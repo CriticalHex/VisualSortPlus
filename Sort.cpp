@@ -1,41 +1,15 @@
 #pragma once
 #include<SFML/Graphics.hpp>
-#include<iostream>
-#include"sorts.cpp"
-#include"button.cpp"
-#include<random>
-#include<ctime>
+#include"Sort.h"
 #include<vector>
-#include<cmath>
-#include<algorithm>
 
 using namespace std;
 
-class Sort
-{
-public:
-	Sort(sf::RenderWindow& screen, int elements, bool seperated = true);
-	~Sort() {};
-	void swap();
-	void draw(sf::RenderWindow& screen);
-	void check();
-	void process();
-	void run();
-
-private:
-	int width;
-	vector<int> sort;
-	vector<int> sorted;
-	int current_index = 0;
-	int second_index = 0;
-	bool done = false;
-	bool seperated;
-};
-
-Sort::Sort(sf::RenderWindow& screen, int elements, bool seperators = true)
+//constructor
+Sort::Sort(sf::RenderWindow& screen, int elements, bool seperators)
 {
 	width = screen.getSize().x / elements;
-	for (int i = width; i < screen.getSize().x + 1; i += width) {
+	for (unsigned int i = width; i < screen.getSize().x + 1; i += width) {
 		sort.push_back(i);
 	}
 	sorted.resize(sort.size());
@@ -44,6 +18,18 @@ Sort::Sort(sf::RenderWindow& screen, int elements, bool seperators = true)
 
 	seperated = seperators;
 
+}
+
+void Sort::initialize(sf::RenderWindow& screen, int elements, bool seperators) {
+	width = screen.getSize().x / elements;
+	for (unsigned int i = width; i < screen.getSize().x + 1; i += width) {
+		sort.push_back(i);
+	}
+	sorted.resize(sort.size());
+	copy(sort.begin(), sort.end(), &sorted);
+	shuffle(sort.begin(), sort.end(), rand());
+
+	seperated = seperators;
 }
 
 void Sort::swap() {
@@ -84,22 +70,10 @@ void Sort::check() {
 	}
 };
 
-void Sort::process(int speed, function proc) {
-
-	if (not done) {
-		for (int i = 0; i < speed; i++) {
-			proc();
-		}
-	}
-
-};
-
-void Sort::run() {
-
-
-
-};
-
+double Sort::interp(double v, double a, double b, double c, double d) {
+	double t = v / (b - a);
+	return lerp(c, d, t);
+}
 /*
 this was the big aha I suppose, numpy has the "interp" function, which is a linear interpolation function, as is "lerp",
 but "interp" has more functionality, as you might excpect from numpy. My graphical sort program uses this to create rectangles
@@ -108,7 +82,3 @@ and then finds what number is that far along the second range. I.e. 5 is halfway
 would return 10. The code below does just that. v would be 5, a=0, b=10, c=0, d=20. 5/10 is .5 (50%), 50% between 0 and 20 is 10. the reason lerp is used here
 and not just .5*20, is because were the second range 10-20, then the function should return 15, as 15 is halfway between those 10 and 20. 
 */
-double interp(double v, double a, double b, double c, double d) {
-	double t = v / (b - a);
-	return lerp(c, d, t);
-}
